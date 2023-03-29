@@ -52,10 +52,6 @@ void heuristicaGulosa()
     }
 
 
-    // sort(filmes.begin(), filmes.end(), compare_endTime);
-
-    //TODO: agora faz a seleção aleatória
-
     for (auto it = dicionario.begin(); it != dicionario.end(); ++it)
     {
         int key = it->first;
@@ -79,7 +75,7 @@ void heuristicaGulosa()
                         horas.set(i);
                     }
                     filmesPorCats[valor.categoria]--;
-                    cout << "Id Selecionado: " << valor.id << endl;
+                    cout << "Id: " << valor.id << " | " << valor.hInicio << "-" << valor.hFinal << " : " << valor.categoria << endl;
                 }
             }
         }
@@ -117,6 +113,89 @@ void heuristicaComAleatoria()
 
         dicionario[filmes[i].hFinal].push_back(filmes[i]);
     }
+
+    // NOTE: Parte da aleatorização
+    unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+    default_random_engine generator (seed);
+
+    uniform_int_distribution<int>tf_distribution(0, 4);
+    uniform_int_distribution<int>choose_dist(0, nfilmes);
+    for (auto it = dicionario.begin(); it != dicionario.end(); ++it)
+    {
+        int choose_at_random = tf_distribution(generator);
+        if (choose_at_random%4==0)
+        {
+            cout << "esolhi";
+            bool finding_movie = true;
+            int j = 0;
+            while (finding_movie)
+            {
+                int modifier = choose_dist(generator)+j;
+                if (modifier>nfilmes) modifier -= nfilmes;
+                auto it = next(dicionario.begin(), modifier);
+                int key = it->first;
+                for (filme valor : it->second)
+                {
+                    if (valor.hInicio <= valor.hFinal){
+                        if (filmesPorCats[valor.categoria] <= 0)
+                        {
+                            break;
+                        }
+                        bitset<24> mascara;
+                        for (int i = valor.hInicio; i <= valor.hFinal; i++) {
+                            mascara.set(i);
+                        }
+
+                        bitset<24> resultado = horas & mascara;
+
+                        if (resultado == 0)
+                        {
+                            for (int i = valor.hInicio; i <= valor.hFinal; i++) {
+                                horas.set(i);
+                            }
+                            filmesPorCats[valor.categoria]--;
+                            cout << "Id: " << valor.id << " | " << valor.hInicio << "-" << valor.hFinal << " : " << valor.categoria << endl;
+                            finding_movie = false;
+                        }
+                        else
+                        {
+                            cout << "oi";
+                            j += 1;
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            cout << "heuhue";
+            int key = it->first;
+            for (filme valor : it->second)
+            {
+                if (valor.hInicio <= valor.hFinal){
+                    if (filmesPorCats[valor.categoria] <= 0)
+                    {
+                        break;
+                    }
+                    bitset<24> mascara;
+                    for (int i = valor.hInicio; i <= valor.hFinal; i++) {
+                        mascara.set(i);
+                    }
+
+                    bitset<24> resultado = horas & mascara;
+
+                    if (resultado == 0)
+                    {
+                        for (int i = valor.hInicio; i <= valor.hFinal; i++) {
+                            horas.set(i);
+                        }
+                        filmesPorCats[valor.categoria]--;
+                        cout << "Id: " << valor.id << " | " << valor.hInicio << "-" << valor.hFinal << " : " << valor.categoria << endl;
+                    }
+                }
+            }
+        }
+    }
 }
 
 
@@ -136,6 +215,6 @@ void heuristicaComAleatoria()
 
 int main()
 {
-    heuristicaGulosa();
+    heuristicaComAleatoria();
     return 0;
 }
