@@ -80,6 +80,7 @@ void heuristicaGulosa()
             }
         }
     }
+    cout << "Aproveitamento - horário: " << (float(horas.count())/24)*100 << "%" << endl;
 }
 
 
@@ -189,6 +190,7 @@ void heuristicaComAleatoria()
             ++it;
         }
     }
+    cout << "Aproveitamento:  - horário" << (float(horas.count())/24)*100 << "%" << endl;
 }
 
 
@@ -208,6 +210,7 @@ void heuristicaComAleatoria()
 
 int main()
 {
+    heuristicaGulosa();
     heuristicaComAleatoria();
     return 0;
 }
