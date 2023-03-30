@@ -19,12 +19,15 @@ bool compare_endTime(filme a, filme b) {
   return a.hFinal > b.hFinal;
 }
 
+bool compare_ITime(filme a, filme b) {
+  return a.hInicio > b.hInicio;
+}
 
 // ##################### GULOSA ###########################
 
 void heuristicaGulosa()
 {
-    int nfilmes, ncategorias, temp;
+    int nfilmes, ncategorias, total = 0;
     cin >> nfilmes >> ncategorias;
 
     vector<int> filmesPorCats;
@@ -54,9 +57,10 @@ void heuristicaGulosa()
 
     for (auto it = dicionario.begin(); it != dicionario.end(); ++it)
     {
-        int key = it->first;
+        vector<filme> this_filmes = it->second;
+        sort(it->second.begin(), it->second.end(), compare_ITime);
         for (filme valor : it->second)
-        {
+        {        
             if (valor.hInicio <= valor.hFinal){
                 if (filmesPorCats[valor.categoria] <= 0)
                 {
@@ -75,12 +79,13 @@ void heuristicaGulosa()
                         horas.set(i);
                     }
                     filmesPorCats[valor.categoria]--;
-                    cout << "Id: " << valor.id << " | " << valor.hInicio << "-" << valor.hFinal << " : " << valor.categoria << endl;
+                    total += 1;
+                    // cout << "ID: " << valor.id << endl;
                 }
             }
         }
     }
-    cout << "Aproveitamento - horário: " << (float(horas.count())/24)*100 << "%" << endl;
+    cout << total << endl;
 }
 
 
@@ -88,7 +93,7 @@ void heuristicaGulosa()
 
 void heuristicaComAleatoria()
 {
-    int nfilmes, ncategorias, temp;
+    int nfilmes, ncategorias, total = 0;
     cin >> nfilmes >> ncategorias;
 
     vector<int> filmesPorCats;
@@ -119,20 +124,20 @@ void heuristicaComAleatoria()
     unsigned seed = chrono::system_clock::now().time_since_epoch().count();
     default_random_engine generator (seed);
 
-    uniform_int_distribution<int>tf_distribution(0, 4);
+    uniform_int_distribution<int>tf_distribution(1, 4);
     uniform_int_distribution<int>choose_dist(0, nfilmes);
     auto it = dicionario.begin();
     while (it != dicionario.end())
     {
+        sort(it->second.begin(), it->second.end(), compare_ITime);
         int choose_at_random = tf_distribution(generator);
         if (choose_at_random%4==0)
         {
             int modifier = choose_dist(generator);
             if (modifier>=dicionario.size()) modifier -= dicionario.size();
             auto randit = next(dicionario.begin(), modifier);
-            if (randit != dicionario.end()){
-                int key = randit->first;
-            
+            if (randit != dicionario.end()){   
+                sort(randit->second.begin(), randit->second.end(), compare_ITime);      
                 for (filme valor : randit->second)
                 {
                     if (valor.hInicio <= valor.hFinal){
@@ -153,7 +158,8 @@ void heuristicaComAleatoria()
                                 horas.set(i);
                             }
                             filmesPorCats[valor.categoria]--;
-                            cout << "Id: " << valor.id << " | " << valor.hInicio << "-" << valor.hFinal << " : " << valor.categoria << endl;
+                            // cout << "ID: " << valor.id << endl;
+                            total += 1;
                             break;
                         }  
                     }
@@ -162,7 +168,7 @@ void heuristicaComAleatoria()
         }
         else
         {
-            int key = it->first;
+            
             for (filme valor : it->second)
             {
                 if (valor.hInicio <= valor.hFinal){
@@ -183,14 +189,15 @@ void heuristicaComAleatoria()
                             horas.set(i);
                         }
                         filmesPorCats[valor.categoria]--;
-                        cout << "Id: " << valor.id << " | " << valor.hInicio << "-" << valor.hFinal << " : " << valor.categoria << endl;
+                        total += 1;
+                        // cout << "ID: " << valor.id << endl;
                     }
                 }
             }
             ++it;
         }
     }
-    cout << "Aproveitamento:  - horário" << (float(horas.count())/24)*100 << "%" << endl;
+    cout << total << endl;
 }
 
 
@@ -210,7 +217,9 @@ void heuristicaComAleatoria()
 
 int main()
 {
-    heuristicaGulosa();
+    
+    // heuristicaGulosa();
     heuristicaComAleatoria();
+    
     return 0;
 }
