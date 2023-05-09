@@ -218,8 +218,8 @@ void heuristicaComAleatoria()
 int main()
 {
     
-    // heuristicaGulosa();
-    heuristicaComAleatoria();
+    heuristicaGulosa();
+    // heuristicaComAleatoria();
     
     return 0;
 }
