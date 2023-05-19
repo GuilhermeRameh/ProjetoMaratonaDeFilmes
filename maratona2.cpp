@@ -30,7 +30,7 @@ void Exaustiva()
     int nfilmes, ncategorias, total, comp_total = 0;
     cin >> nfilmes >> ncategorias;
 
-    vector<int> filmesPorCats;
+    vector<int> filmesPorCats, fpcReset;
     vector<filme> filmes;
 
     bitset<24> horas(0x0000000000000000000);
@@ -38,13 +38,14 @@ void Exaustiva()
     bitset<64> bitsetFilmes(0);
 
     filmesPorCats.reserve(ncategorias);
+    fpcReset.reserve(ncategorias);
 
     // TODO: PARALELIZAR
     for (int i=0; i<ncategorias; i++)
     {
         cin >> filmesPorCats[i];
+        fpcReset[i] = filmesPorCats[i];
     }
-
 
     // TODO: PARALELIZAR
     for (int i=0; i<nfilmes; i++)
@@ -63,11 +64,19 @@ void Exaustiva()
     {
         total = 0;
         bitsetFilmes = i;
-        for (int j=0; j<nfilmes; j++)
+        horas = 0;
+
+        for (int i=0; i<ncategorias; i++)
         {
+            filmesPorCats[i] = fpcReset[i] ;
+        }
+
+        for (int j=0; j<nfilmes; j++)
+        {            
             if (bitsetFilmes[j])
             {
                 filme valor = filmes[j];
+                
                 if (valor.hInicio <= valor.hFinal){
                     if (filmesPorCats[valor.categoria] <= 0)
                     {
@@ -89,7 +98,7 @@ void Exaustiva()
                         }
                         filmesPorCats[valor.categoria]--;
                         total += 1;
-                        cout << "ID: " << valor.id << endl;
+                        // cout << "  > Iter - " << i << "   ID: " << valor.id << endl;
                     }
                 }
             }
