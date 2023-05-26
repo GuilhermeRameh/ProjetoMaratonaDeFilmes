@@ -4,6 +4,7 @@
 #include <boost/random.hpp>
 #include <bitset>
 #include <map>
+#include <omp.h>
 
 using namespace std;
 
@@ -126,14 +127,103 @@ void Exaustiva()
 
     // OUTRO FOR
     // CHECA TODAS AS RESPOSTAS, E PROCURA O MAIOR
+}
 
+
+void ParOPENMP()
+{
+    int nfilmes, ncategorias, total, comp_total = 0;
+    cin >> nfilmes >> ncategorias;
+
+    vector<int> filmesPorCats, fpcReset;
+    vector<filme> filmes;
+
+    bitset<24> horas(0x0000000000000000000);
+
+    bitset<64> bitsetFilmes(0);
+
+    filmesPorCats.reserve(ncategorias);
+    fpcReset.reserve(ncategorias);
+
+    #pragma omp parallel for
+    for (int i=0; i<ncategorias; i++)
+    {
+        cin >> filmesPorCats[i];
+        fpcReset[i] = filmesPorCats[i];
+    }
+
+    // TODO: PARALELIZAR
+    for (int i=0; i<nfilmes; i++)
+    {
+        filme this_film;
+        this_film.id = i;
+        cin >> this_film.hInicio >> this_film.hFinal >> this_film.categoria;
+        filmes.push_back(this_film);
+    }
+
+    
+    // NOTE: Aqui é o for de 0 a 2^filmes - faz todas as possibilidades
+    // TODO: PARALELIZAR
+
+    for (int i=0;i<pow(2, nfilmes); i++)
+    {
+        total = 0;
+        bitsetFilmes = i;
+        horas = 0;
+
+        for (int i=0; i<ncategorias; i++)
+        {
+            filmesPorCats[i] = fpcReset[i] ;
+        }
+
+        for (int j=0; j<nfilmes; j++)
+        {            
+            if (bitsetFilmes[j])
+            {
+                filme valor = filmes[j];
+                
+                if (valor.hInicio <= valor.hFinal){
+                    if (filmesPorCats[valor.categoria] <= 0)
+                    {
+                        break;
+                    }
+                    bitset<24> mascara;
+                    for (int i = valor.hInicio; i <= valor.hFinal; i++) {
+                        mascara.set(i);
+                    }
+
+                    // cout << "\nInicio: " << valor.hInicio << " Final: " << valor.hFinal;
+
+                    bitset<24> resultado = horas & mascara;
+
+                    if (resultado == 0)
+                    {
+                        for (int i = valor.hInicio; i <= valor.hFinal; i++) {
+                            horas.set(i);
+                        }
+                        filmesPorCats[valor.categoria]--;
+                        total += 1;
+                        // cout << "  > Iter - " << i << "   ID: " << valor.id << endl;
+                    }
+                }
+            }
+        }
+        if (total > comp_total)
+        {
+            comp_total = total;
+        }
+    }
+
+    cout << "\nTOTAL GLOBAL: " << comp_total << endl;
 }
 
 
 int main()
 {
     
-    Exaustiva();
+    // Exaustiva();
+    ParOPENMP();
+    // ParTHRUST();
     
     return 0;
 }
