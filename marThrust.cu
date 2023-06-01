@@ -28,9 +28,9 @@ struct CheckFilm {
     __host__ __device__
     int operator()(int i)
     {
-        thrust::device_vector<bool> horas(24);
-        thrust::device_vector<bool> bitsetFilmes(64);
-        thrust::device_vector<int> localfilmesPorCats;
+        vector<bool> horas(24);
+        vector<bool> bitsetFilmes(64);
+        vector<int> localfilmesPorCats;
         localfilmesPorCats.resize(ncategorias);
 
         int local_total_iteration = 0;
@@ -68,7 +68,7 @@ struct CheckFilm {
                     {
                         break;
                     }
-                    thrust::device_vector<bool> mascara(24);
+                    vector<bool> mascara(24);
                     for (int i = valor.hInicio; i <= valor.hFinal; i++) {
                         mascara[i] = true;
                     }
