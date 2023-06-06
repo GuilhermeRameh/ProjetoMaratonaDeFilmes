@@ -81,7 +81,7 @@ void Exaustiva()
                 filme valor = filmes[j];
                 
                 if (valor.hInicio <= valor.hFinal){
-                    if (filmesPorCats[valor.categoria] <= 0)
+                    if (filmesPorCats[valor.categoria-1] <= 0)
                     {
                         break;
                     }
@@ -99,7 +99,7 @@ void Exaustiva()
                         for (int i = valor.hInicio; i <= valor.hFinal; i++) {
                             horas.set(i);
                         }
-                        filmesPorCats[valor.categoria]--;
+                        filmesPorCats[valor.categoria-1]--;
                         total += 1;
                         // cout << "  > Iter - " << i << "   ID: " << valor.id << endl;
                     }
@@ -188,7 +188,7 @@ void ParOPENMP()
                 filme valor = filmes[j];
                 
                 if (valor.hInicio <= valor.hFinal){
-                    if (localfilmesPorCats[valor.categoria] <= 0)
+                    if (localfilmesPorCats[valor.categoria-1] <= 0)
                     {
                         break;
                     }
@@ -206,7 +206,7 @@ void ParOPENMP()
                         for (int i = valor.hInicio; i <= valor.hFinal; i++) {
                             horas.set(i);
                         }
-                        localfilmesPorCats[valor.categoria]--;
+                        localfilmesPorCats[valor.categoria-1]--;
                         local_total_iteration += 1;
                         // cout << "  > Iter - " << i << "   ID: " << valor.id << endl;
                     }
